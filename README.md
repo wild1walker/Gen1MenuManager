@@ -91,6 +91,13 @@ Both live under the mod's entry in the mod manager.
 
 ## Tests
 
+From the root of a gen1recomp checkout, with this mod at
+`mods/Gen1MenuManager/`. The suite drives the engine's own Loader, so it does
+not run from a bare clone of this repository.
+
 ```sh
 luajit mods/Gen1MenuManager/tests/Gen1MenuManager_test.lua
 ```
+
+It runs against the ROM-free fixture dataset, so a checkout with no ROM
+imported is fine.
