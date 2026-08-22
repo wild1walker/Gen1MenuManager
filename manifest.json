@@ -1,0 +1,21 @@
+{
+  "id": "Gen1MenuManager",
+  "name": "Gen1 Menu Manager",
+  "version": "0.2.0",
+  "api": 2,
+  "entry": "main.lua",
+  "profile": "content",
+  "game_version": ">=0.0.0-dev <2.0.0",
+  "category": "TOOL",
+  "priority": 900,
+  "dependencies": [],
+  "optional_dependencies": [],
+  "conflicts": [],
+  "incompatible": [],
+  "games": [
+    "all"
+  ],
+  "experimental": false,
+  "description": "Reorder, hide and pin rows on the START menu and the PC menu.",
+  "github": "wild1walker/Gen1MenuManager"
+}

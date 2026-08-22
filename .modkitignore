@@ -1,0 +1,11 @@
+# Development-only files, kept out of the release package.
+#
+# Two reasons, not one.  The obvious: a player does not need the suite.  The
+# load-bearing one: modkit's MK006 scan walks the same file list the packer
+# does, and a test legitimately requires src.mods.Runtime and src.ui.Screens
+# to drive the hooks -- reaches the MOD never makes.  Without this, packing
+# would demand the engine_internals permission for code that never ships,
+# and the manager would show players a PATCHES ENGINE CODE badge for it.
+#
+# Exact relative paths; the matcher is not a glob.
+tests/Gen1MenuManager_test.lua

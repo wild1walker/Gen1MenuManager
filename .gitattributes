@@ -1,0 +1,5 @@
+# The release workflow builds its .zip from `git archive HEAD`, so anything
+# marked export-ignore here stays out of what players install.  Same intent as
+# .modkitignore, which covers `modkit pack`: the suite is development-only.
+tests/ export-ignore
+.modkitignore export-ignore
