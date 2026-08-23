@@ -1,6 +1,8 @@
 <p align="center">
-  <img src="docs/banner.png" alt="Gen1MenuManager" width="470">
+  <img src="docs/banner.png" alt="Gen1Wild" width="400">
 </p>
+
+<h1 align="center">Gen1MenuManager</h1>
 
 <p align="center">
   <b>Your menus, in the order you want them</b>
