@@ -1,4 +1,4 @@
-# Gen1 Menu Manager
+# Gen1MenuManager
 
 Rearrange the START menu and the Pokémon Center PC menu: reorder the rows,
 hide the ones you never touch, and pin field items and moves so they get a row

@@ -1,6 +1,6 @@
 {
   "id": "Gen1MenuManager",
-  "name": "Gen1 Menu Manager",
+  "name": "Gen1MenuManager",
   "version": "0.2.0",
   "api": 2,
   "entry": "main.lua",
