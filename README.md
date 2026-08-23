@@ -1,4 +1,16 @@
-# Gen1MenuManager
+<p align="center">
+  <a href="https://wild1walker.github.io/Gen1Wild/"><img src="docs/banner.png" alt="Gen1Wild" width="400"></a>
+</p>
+
+<h1 align="center">Gen1MenuManager</h1>
+
+<p align="center">
+  <a href="https://wild1walker.github.io/Gen1Wild/"><img src="docs/lineup.png" alt="Check out my other mods!" width="880"></a>
+</p>
+
+<p align="center">
+  <b>Your menus, in the order you want them</b>
+</p>
 
 Rearrange the START menu and the Pokémon Center PC menu: reorder the rows,
 hide the ones you never touch, and pin field items and moves so they get a row
