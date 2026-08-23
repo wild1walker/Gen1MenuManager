@@ -1,4 +1,10 @@
-# Gen1MenuManager
+<p align="center">
+  <img src="docs/banner.png" alt="Gen1MenuManager" width="470">
+</p>
+
+<p align="center">
+  <b>Your menus, in the order you want them</b>
+</p>
 
 Rearrange the START menu and the Pokémon Center PC menu: reorder the rows,
 hide the ones you never touch, and pin field items and moves so they get a row
