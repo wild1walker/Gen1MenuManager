@@ -3,3 +3,5 @@
 # .modkitignore, which covers `modkit pack`: the suite is development-only.
 tests/ export-ignore
 .modkitignore export-ignore
+
+docs/ export-ignore
