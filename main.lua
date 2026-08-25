@@ -57,6 +57,12 @@ return function(mod)
     -- mean inventing a message the ROM does not have.
     { key = "hide_unusable", type = "toggle", label = "HIDE UNUSABLE",
       default = true },
+    -- The mod's own shorter name for a pinned row, where it has one -- today
+    -- just the town map, whose row opens the map screen rather than handing
+    -- you the item and so reads MAP.  Off puts every pin back on the name
+    -- the game itself uses, which is what the editor lists either way.
+    { key = "short_names", type = "toggle", label = "SHORT NAMES",
+      default = true },
   })
 
   -- ------- persistence
@@ -272,11 +278,14 @@ return function(mod)
       if layout.pins[key] then
         local ok, owned = pcall(entry.owned, game)
         if ok and owned then
-          -- menuLabel when the pin has one: the editor lists a pin under the
-          -- item or move it comes from, the live row may read differently
-          -- (see pins.lua).
-          local gotLabel, label =
-            pcall(entry.menuLabel or entry.label, mod, game)
+          -- entry.label is the item or move the pin comes from -- the name
+          -- the editor lists it under, and the one SHORT NAMES off hands
+          -- back.  menuLabel is the mod's own shorter row name (pins.lua).
+          local labelFn = entry.label
+          if entry.menuLabel and mod.options:get("short_names") then
+            labelFn = entry.menuLabel
+          end
+          local gotLabel, label = pcall(labelFn, mod, game)
           rows[#rows + 1] = {
             -- keysFor honours mmKey, so a pin keeps one identity whatever its
             -- label localizes to and never collides with an engine row

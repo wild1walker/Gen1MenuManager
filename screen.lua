@@ -33,6 +33,21 @@ return function(mod, Layout, Pins, contexts)
     return text:sub(1, spans[LABEL_TILES].to)
   end
 
+  -- A pin reaches the snapshot under the label the MENU gave it, which for a
+  -- pin with a menuLabel is the short one (MAP).  The editor names every pin
+  -- after the item or move it comes from instead, so the list does not rename
+  -- a row underneath the cursor when SHORT NAMES is switched, and reads the
+  -- same whether the pin is currently on the menu or waiting below it.
+  -- Answers nil for anything that is not a pin -- engine rows keep the label
+  -- the menu built them with, which is the only name they have.
+  local function catalogName(game, key)
+    if not Layout.isPin(key) then return nil end
+    local entry = Pins.byId(Layout.pinId(key))
+    if not entry then return nil end
+    local ok, name = pcall(entry.label, mod, game)
+    return ok and name or nil
+  end
+
   -- Everything the player can arrange: the rows the last build of THIS menu
   -- actually produced, plus -- on the START menu only -- every pin in the
   -- catalog, marked unavailable when it is not owned yet.
@@ -45,7 +60,8 @@ return function(mod, Layout, Pins, contexts)
       if not seen[row.key] then
         seen[row.key] = true
         entries[#entries + 1] = {
-          key = row.key, label = row.label, kind = "row",
+          key = row.key, label = catalogName(game, row.key) or row.label,
+          kind = "row",
           on = not layout.hidden[row.key],
           locked = protected[row.key] or false,
         }
