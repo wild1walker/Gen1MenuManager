@@ -26,8 +26,10 @@
 -- move -- and is what the editor lists the pin under.  An entry may also
 -- carry `menuLabel` for the row the player sees on the menu itself, for the
 -- one case where the row does something the item name does not describe.
--- Both take (mod, game) and both go through pcall at their call sites, so a
--- label that errors costs the row its name, not the menu.
+-- main.lua reaches for menuLabel only while the SHORT NAMES option is on, so
+-- a player who wants the game's own names can have them back.  Both take
+-- (mod, game) and both go through pcall at their call sites, so a label that
+-- errors costs the row its name, not the menu.
 
 local M = {}
 
@@ -120,7 +122,8 @@ M.catalog = {
   -- The only entry with a menuLabel: the live row opens the map screen
   -- rather than handing you the item, and "MAP" says that in a menu whose
   -- rows are one word apiece.  The editor keeps the item name, which is what
-  -- a player scanning the pin list recognises from the bag.
+  -- a player scanning the pin list recognises from the bag -- and SHORT NAMES
+  -- off puts the item name on the menu row too.
   {
     id = "townmap",
     label = function(mod, game) return itemName(mod, game, "TOWN_MAP") end,

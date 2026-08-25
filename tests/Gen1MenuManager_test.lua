@@ -136,6 +136,15 @@ T.check(not labels(out):find("TOWN MAP"),
   "and the row carries the pin's menuLabel, not the item name")
 T.check(not labels(out):find("BICYCLE"), "the unowned pin still has none")
 
+-- SHORT NAMES off hands the row back to the name the game itself uses
+setOption("short_names", false)
+out = build(game, vanillaRows("RED"))
+T.check(labels(out):find("TOWN MAP"),
+  "SHORT NAMES off puts the item name on the row")
+setOption("short_names", true)
+out = build(game, vanillaRows("RED"))
+T.check(not labels(out):find("TOWN MAP"), "and back on again")
+
 -- and a pin obeys the saved order like any other row
 loader.modSave.Gen1MenuManager = { layout = { v = 1, hidden = {},
   pins = { ["P:townmap"] = true }, order = { "P:townmap" } } }
@@ -430,6 +439,38 @@ T.eq(#pcMenu.items, beforeCount - 1, "the live PC menu lost the hidden row")
 T.eq(pcMenu.items[#pcMenu.items].label, "LOG OFF", "and kept its exit")
 T.eq(pcMenu.th, #pcMenu.items * 2 + 2, "the box was resized to match")
 T.check(pcMenu.index <= #pcMenu.items, "the cursor is still in range")
+
+-- ------- 12. the editor names a pin after the item, even while it is pinned
+--
+-- A pin that is ON reaches the editor through the menu snapshot, which
+-- carries the label the MENU used -- the short one.  The editor has to reach
+-- past that to the catalog, or the row would rename itself as the pin goes
+-- on and off, and SHORT NAMES would rewrite the editor as well as the menu.
+
+game = newGame({ inventory = { TOWN_MAP = 1 } })
+loader.modSave.Gen1MenuManager = { layout = { v = 1, hidden = {}, order = {},
+  pins = { ["P:townmap"] = true } } }
+out = build(game, vanillaRows("RED"))
+T.eq(out[#out].label, "MAP", "the pinned row reads MAP on the menu")
+
+local function labelOf(scr, key)
+  for _, entry in ipairs(scr.entries) do
+    if entry.key == key then return entry.label end
+  end
+  return nil
+end
+
+local pinned = Screens.build(game, "Gen1MenuManagerEditor", {})
+T.eq(labelOf(pinned, "P:townmap"), "TOWN MAP",
+  "the editor lists a pin that is on under the item name")
+
+setOption("short_names", false)
+out = build(game, vanillaRows("RED"))
+T.eq(out[#out].label, "TOWN MAP", "SHORT NAMES off puts the item name on the menu")
+local vanilla = Screens.build(game, "Gen1MenuManagerEditor", {})
+T.eq(labelOf(vanilla, "P:townmap"), "TOWN MAP",
+  "and the editor is unmoved either way")
+setOption("short_names", true)
 
 run.release()
 require("src.ui.Screens").invalidate()

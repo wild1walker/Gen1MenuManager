@@ -60,7 +60,8 @@ hidden), or `----` for a pin you have not unlocked yet.
 The TOWN MAP pin is the one row whose label is not the name of the thing it
 comes from: it opens the map screen rather than handing you the item, so the
 menu row reads `MAP`. The editor still lists it as `TOWN MAP`, under the name
-you know it by in the bag.
+you know it by in the bag. Turn **SHORT NAMES** off and the menu row reads
+`TOWN MAP` as well.
 
 ITEMFINDER and the POKé FLUTE are deliberately absent. Their behavior lives
 inside the bag's own result dispatch, which is file-local and exported
@@ -69,7 +70,7 @@ of step. They stay in the bag.
 
 ## Options
 
-Both live under the mod's entry in the mod manager.
+They all live under the mod's entry in the mod manager.
 
 - **SELECT OPENS** — SELECT opens the editor from either menu. On by default,
   and while it is on the MENU MGR row is an ordinary row you can hide like any
@@ -80,6 +81,10 @@ Both live under the mod's entry in the mod manager.
 - **HIDE UNUSABLE** — drop a pin whose action cannot run right now (the
   BICYCLE indoors, SURF facing dry land) instead of showing a row that
   refuses. On by default.
+- **SHORT NAMES** — let a pin use this mod's own shorter row name where it
+  has one. On by default, and today it is the TOWN MAP row alone, which reads
+  `MAP`. Turn it off and every pin goes back to the item or move name the
+  game itself uses. The editor lists pins under the game's names either way.
 
 ## Notes
 
