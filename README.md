@@ -50,7 +50,7 @@ hidden), or `----` for a pin you have not unlocked yet.
 
 | Pin | Appears once |
 | --- | --- |
-| TOWN MAP | the TOWN MAP is in the bag |
+| MAP | the TOWN MAP is in the bag |
 | BICYCLE | the BICYCLE is in the bag |
 | OLD / GOOD / SUPER ROD | that rod is in the bag |
 | FLY | a party member knows FLY and you hold the THUNDERBADGE |

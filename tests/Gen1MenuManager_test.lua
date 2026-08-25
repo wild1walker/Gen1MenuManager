@@ -127,18 +127,18 @@ game = newGame()
 loader.modSave.Gen1MenuManager = { layout = { v = 1, order = {}, hidden = {},
   pins = { ["P:townmap"] = true, ["P:bicycle"] = true } } }
 out = build(game, vanillaRows("RED"))
-T.check(not labels(out):find("TOWN MAP"), "an unowned pin has no row")
+T.check(not labels(out):find("MAP"), "an unowned pin has no row")
 
 game.save.inventory.TOWN_MAP = 1
 out = build(game, vanillaRows("RED"))
-T.check(labels(out):find("TOWN MAP"), "the pin appears once the item is in the bag")
+T.check(labels(out):find("MAP"), "the pin appears once the item is in the bag")
 T.check(not labels(out):find("BICYCLE"), "the unowned pin still has none")
 
 -- and a pin obeys the saved order like any other row
 loader.modSave.Gen1MenuManager = { layout = { v = 1, hidden = {},
   pins = { ["P:townmap"] = true }, order = { "P:townmap" } } }
 out = build(game, vanillaRows("RED"))
-T.eq(out[1].label, "TOWN MAP", "a pin can be ordered ahead of the engine rows")
+T.eq(out[1].label, "MAP", "a pin can be ordered ahead of the engine rows")
 
 -- a move pin needs the badge as well as the move
 game = newGame({ party = { { moves = { { id = "CUT" } } } } })

@@ -109,9 +109,13 @@ M.catalog = {
   -- The row this whole mod started as: TOWN MAP without the bag detour.
   -- Screens.push("TownMap") is exactly what BagMenu does on the "townmap"
   -- result, and TownMap.new reads its own data, so there is nothing to pass.
+  --
+  -- The label is the one pin that does NOT come from the item name: the row
+  -- opens the map screen rather than handing you the item, and "MAP" says
+  -- that in a menu whose rows are one word apiece.
   {
     id = "townmap",
-    label = function(mod, game) return itemName(mod, game, "TOWN_MAP") end,
+    label = function() return "MAP" end,
     owned = function(game) return hasItem(game, "TOWN_MAP") end,
     run = function(mod, game)
       mod.ui.push(game, "TownMap")
