@@ -57,6 +57,11 @@ hidden), or `----` for a pin you have not unlocked yet.
 | CUT, SURF, STRENGTH, FLASH | a party member knows it and you hold its badge |
 | DIG, TELEPORT | a party member knows it |
 
+The TOWN MAP pin is the one row whose label is not the name of the thing it
+comes from: it opens the map screen rather than handing you the item, so the
+menu row reads `MAP`. The editor still lists it as `TOWN MAP`, under the name
+you know it by in the bag.
+
 ITEMFINDER and the POKé FLUTE are deliberately absent. Their behavior lives
 inside the bag's own result dispatch, which is file-local and exported
 nowhere; pinning them would mean duplicating engine logic that can drift out
