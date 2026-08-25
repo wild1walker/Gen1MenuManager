@@ -123,3 +123,13 @@ luajit mods/Gen1MenuManager/tests/Gen1MenuManager_test.lua
 
 It runs against the ROM-free fixture dataset, so a checkout with no ROM
 imported is fine.
+
+---
+
+## Credits
+
+By **Wild**.
+
+Built on the menu-item hooks of [Pokemon Gen1Recomp](https://github.com/bryanthaboi/gen1recomp), and on the [pret](https://github.com/pret) disassembly of
+Pokemon Red, Blue and Yellow: `engine/menus/draw_start_menu.asm` is the menu
+this mod reorders, and the row order it ships with is that file's own.
