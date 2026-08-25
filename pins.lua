@@ -21,6 +21,13 @@
 -- bag.  Readiness is left to useFieldAction, which does its own gating at the
 -- moment of use -- and by then Menu has already popped itself, so the world
 -- is on top again.
+--
+-- LABELS.  `label` names the thing the pin comes from -- the item or the
+-- move -- and is what the editor lists the pin under.  An entry may also
+-- carry `menuLabel` for the row the player sees on the menu itself, for the
+-- one case where the row does something the item name does not describe.
+-- Both take (mod, game) and both go through pcall at their call sites, so a
+-- label that errors costs the row its name, not the menu.
 
 local M = {}
 
@@ -109,9 +116,15 @@ M.catalog = {
   -- The row this whole mod started as: TOWN MAP without the bag detour.
   -- Screens.push("TownMap") is exactly what BagMenu does on the "townmap"
   -- result, and TownMap.new reads its own data, so there is nothing to pass.
+  --
+  -- The only entry with a menuLabel: the live row opens the map screen
+  -- rather than handing you the item, and "MAP" says that in a menu whose
+  -- rows are one word apiece.  The editor keeps the item name, which is what
+  -- a player scanning the pin list recognises from the bag.
   {
     id = "townmap",
     label = function(mod, game) return itemName(mod, game, "TOWN_MAP") end,
+    menuLabel = function() return "MAP" end,
     owned = function(game) return hasItem(game, "TOWN_MAP") end,
     run = function(mod, game)
       mod.ui.push(game, "TownMap")

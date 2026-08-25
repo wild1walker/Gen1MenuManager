@@ -272,7 +272,11 @@ return function(mod)
       if layout.pins[key] then
         local ok, owned = pcall(entry.owned, game)
         if ok and owned then
-          local gotLabel, label = pcall(entry.label, mod, game)
+          -- menuLabel when the pin has one: the editor lists a pin under the
+          -- item or move it comes from, the live row may read differently
+          -- (see pins.lua).
+          local gotLabel, label =
+            pcall(entry.menuLabel or entry.label, mod, game)
           rows[#rows + 1] = {
             -- keysFor honours mmKey, so a pin keeps one identity whatever its
             -- label localizes to and never collides with an engine row

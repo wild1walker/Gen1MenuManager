@@ -127,18 +127,20 @@ game = newGame()
 loader.modSave.Gen1MenuManager = { layout = { v = 1, order = {}, hidden = {},
   pins = { ["P:townmap"] = true, ["P:bicycle"] = true } } }
 out = build(game, vanillaRows("RED"))
-T.check(not labels(out):find("TOWN MAP"), "an unowned pin has no row")
+T.check(not labels(out):find("MAP"), "an unowned pin has no row")
 
 game.save.inventory.TOWN_MAP = 1
 out = build(game, vanillaRows("RED"))
-T.check(labels(out):find("TOWN MAP"), "the pin appears once the item is in the bag")
+T.check(labels(out):find("MAP"), "the pin appears once the item is in the bag")
+T.check(not labels(out):find("TOWN MAP"),
+  "and the row carries the pin's menuLabel, not the item name")
 T.check(not labels(out):find("BICYCLE"), "the unowned pin still has none")
 
 -- and a pin obeys the saved order like any other row
 loader.modSave.Gen1MenuManager = { layout = { v = 1, hidden = {},
   pins = { ["P:townmap"] = true }, order = { "P:townmap" } } }
 out = build(game, vanillaRows("RED"))
-T.eq(out[1].label, "TOWN MAP", "a pin can be ordered ahead of the engine rows")
+T.eq(out[1].label, "MAP", "a pin can be ordered ahead of the engine rows")
 
 -- a move pin needs the badge as well as the move
 game = newGame({ party = { { moves = { { id = "CUT" } } } } })
@@ -193,6 +195,18 @@ T.check(type(screen.update) == "function" and type(screen.draw) == "function",
 T.check(screen.isOpaque, "and an opaque one")
 T.eq(screen.entries[1].label, "POKéDEX", "it lists the rows the menu just built")
 T.check(#screen.entries > 8, "and every pin in the catalog after them")
+
+-- A pin is listed in the editor under the item or move it comes from, even
+-- when the row the player ends up with reads differently: the town map pin
+-- is TOWN MAP here and MAP on the menu itself.
+local function pinEntry(key)
+  for _, entry in ipairs(screen.entries) do
+    if entry.key == key then return entry end
+  end
+  return nil
+end
+T.eq(pinEntry("P:townmap").label, "TOWN MAP",
+  "the editor lists a pin under the item it comes from")
 
 -- grab the top row and walk it down one: A, DOWN, A
 press("a"); screen:update()
