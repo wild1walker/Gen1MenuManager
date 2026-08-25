@@ -1,0 +1,36 @@
+-- Sharing metadata read by tooling and the mod manager's detail pane; never
+-- by the loader's merge, so an absent or malformed card cannot break a load.
+return {
+  summary = "Rearrange the START menu and the Pokemon Center PC menu: reorder "
+    .. "rows, hide the ones you never touch, and pin field items and moves "
+    .. "to rows of their own.",
+  author = "Wild",
+  contact = "https://github.com/wild1walker/Gen1MenuManager",
+  tags = { "ui", "menu", "quality-of-life" },
+  differences = {
+    changed = {
+      "the START menu's row order is yours rather than the cartridge's, and "
+        .. "a row you never use can be hidden outright",
+      "the Pokemon Center PC menu is reorderable on the same terms",
+    },
+    added = {
+      "field items and field moves can be pinned to rows of their own, so "
+        .. "the thing you actually use is one press away rather than two "
+        .. "menus deep",
+    },
+    known = {
+      "the order is this mod's, so another mod that inserts its own START "
+        .. "row lands wherever this mod's ordering puts it",
+    },
+  },
+  credits = {
+    { who = "Gen1Recomp", for_ = "the menu-item hooks this mod reorders "
+      .. "through" },
+    { who = "pret/pokered", for_ = "engine/menus/draw_start_menu.asm, the "
+      .. "menu this rearranges and the source of the order it ships with" },
+    { who = "Nintendo / Creatures / GAME FREAK", for_ = "Pokemon Red, Blue "
+      .. "and Yellow.  Unofficial fan mod, distributed free, no affiliation "
+      .. "and no endorsement" },
+  },
+  compat = { engine = ">=0.0.0-0 <2.0.0", modApi = 2, games = { "gen1" } },
+}
