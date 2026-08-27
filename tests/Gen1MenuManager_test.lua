@@ -182,6 +182,16 @@ T.eq(optionRows[2].label, "MENU MANAGER", "and it is the way back to the editor"
 T.check(type(optionRows[2].activate) == "function",
   "options rows open screens through activate")
 
+-- Anchored, not appended.  The engine groups the OPTION screen after this
+-- hook runs and lays its own named rows out first, so an appended row lands
+-- past the platform rows while every other mod row sits under MODS.
+local anchored = Runtime.call("ui.options.rows",
+  function(_, rows) return rows end, game,
+  { { id = "text_speed" }, { id = "mods", label = "MODS" } })
+T.eq(#anchored, 3, "still exactly one row added")
+T.eq(anchored[2].label, "MENU MANAGER", "which sits before MODS")
+T.eq(anchored[3].label, "MODS", "and MODS keeps its place after it")
+
 -- ------- 8. the editor screen
 
 -- A stand-in for game.input: one press per update, the shape Menu and
