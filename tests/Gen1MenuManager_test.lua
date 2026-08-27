@@ -191,6 +191,8 @@ local anchored = Runtime.call("ui.options.rows",
 T.eq(#anchored, 3, "still exactly one row added")
 T.eq(anchored[2].label, "MENU MANAGER", "which sits before MODS")
 T.eq(anchored[3].label, "MODS", "and MODS keeps its place after it")
+T.check(anchored[2].top == true,
+  "and it asks for the top, which Gen1ModMenu honours when installed")
 
 -- ------- 8. the editor screen
 
