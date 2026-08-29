@@ -37,7 +37,8 @@ the vanilla controls.
 Each menu keeps its own arrangement. Open the editor from the START menu and
 you are editing the START menu; open it from a PC and you are editing that —
 and **LEFT and RIGHT walk between them**, which is what makes all three
-reachable from the one row on the OPTION screen.
+reachable from the one row on the OPTION screen. The title says which menu you
+are on and carries the arrows: `< START MENU >`.
 
 | Button | Does |
 | --- | --- |
@@ -69,6 +70,15 @@ the finished list directly.
 Rows on it carry ids, which the layout already prefers over labels (it does the
 same for Gold's PC rows): an id is neither localized nor rewritten when the
 bag's best repel changes, and both are true of the labels on that menu.
+
+**And the editor lists rows that menu has not shown yet.** Its rows appear only
+where they are usable — `FLY` outdoors, `FLASH` in the dark, a repel while one
+is in the bag — so an editor that knew only what it had seen could arrange
+almost none of it: putting `FLY` in its place would mean standing outdoors,
+with `FLY` in the party, holding the editor open. The mod that builds the menu
+publishes a catalog of everything it can ever show, and the rows in it that are
+not on screen right now are listed anyway — ordered and switched off in
+advance, the same way a pin is.
 
 `CANCEL` is locked there. B closes the menu too, but a way out you can *see* is
 not the same as one you have to know about.

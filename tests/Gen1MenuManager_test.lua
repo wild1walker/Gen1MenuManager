@@ -554,6 +554,106 @@ do
     "the SELECT arrangement is saved under a key of its own")
 end
 
+-- ------- nothing is drawn on the box's own border
+--
+-- The editor is one box, 20 by 18 tiles.  Row 16 is the hint line and row 17
+-- is the frame's bottom edge, so a second line of hints lands ON the frame and
+-- comes out as a smear over it.  Which is what a "< >:MENU" line did.  The
+-- arrows live on the title now, where there is room and where the thing they
+-- move is already named.
+
+do
+  local Font = require("src.render.Font")
+  local editor = Screens.build(game, "Gen1MenuManagerEditor", {})
+
+  local drawn = {}
+  local realDraw = Font.draw
+  Font.draw = function(text, x, y)
+    drawn[#drawn + 1] = { text = tostring(text), x = x, y = y }
+    return realDraw(text, x, y)
+  end
+  editor:draw()
+  Font.draw = realDraw
+
+  local onBorder = {}
+  for _, d in ipairs(drawn) do
+    -- 17 * 8: the bottom border row, and the row above it is the last
+    -- interior one
+    if d.y >= 17 * 8 then onBorder[#onBorder + 1] = d.text end
+  end
+  T.eq(table.concat(onBorder, ","), "",
+    "no text is drawn on the frame's bottom edge")
+
+  local title
+  for _, d in ipairs(drawn) do
+    if d.y == 8 then title = d.text break end
+  end
+  T.eq(title, "< START MENU >",
+    "and the title carries the arrows that walk between the menus")
+end
+
+-- ------- a row the menu has not shown yet is still arrangeable
+--
+-- The field menu's rows appear only where they are usable: FLY outdoors,
+-- FLASH in the dark, a repel while one is in the bag.  An editor that lists
+-- only what it has SEEN can arrange almost none of it -- putting FLY in its
+-- place would mean standing outdoors, with FLY in the party, holding the
+-- editor open.  So the mod that builds the menu publishes a catalog of what
+-- it can ever show, and the editor lists the rest of it.
+
+do
+  local ctx = nil
+  -- reach the context the editor uses, through the editor itself
+  local probe = Screens.build(game, "Gen1MenuManagerEditor", { context = "select" })
+  ctx = probe.ctx
+
+  local before = Screens.build(game, "Gen1MenuManagerEditor",
+                               { context = "select" })
+  local seenOnly = #before.entries
+
+  ctx.catalog = function()
+    return {
+      { id = "fly", label = "FLY" },
+      { id = "map", label = "MAP" },
+      { id = "cancel", label = "CANCEL" },
+    }
+  end
+  local after = Screens.build(game, "Gen1MenuManagerEditor",
+                              { context = "select" })
+  local labels = {}
+  for _, entry in ipairs(after.entries) do
+    labels[#labels + 1] = tostring(entry.label)
+  end
+  T.check(#after.entries > seenOnly,
+    "the catalog puts rows in the editor the menu has never shown")
+  T.eq(table.concat(labels, ","), "FLY,MAP,CANCEL",
+    "every row the menu can show is listed, in the catalog's own order")
+
+  -- and they can be switched off before they have ever appeared
+  local flyEntry
+  for _, entry in ipairs(after.entries) do
+    if entry.key == "I:fly" then flyEntry = entry end
+  end
+  T.check(flyEntry ~= nil, "a catalog row is keyed by its id")
+  T.check(flyEntry and flyEntry.on, "and starts shown")
+
+  -- CANCEL is locked, catalog or not: it is the way out you can see
+  local cancelEntry
+  for _, entry in ipairs(after.entries) do
+    if entry.key == "I:cancel" then cancelEntry = entry end
+  end
+  T.check(cancelEntry and cancelEntry.locked,
+    "and CANCEL is locked even before the menu has shown it")
+
+  -- a catalog that raises costs the catalog, not the editor
+  ctx.catalog = function() error("boom", 0) end
+  local safe = Screens.build(game, "Gen1MenuManagerEditor",
+                             { context = "select" })
+  T.check(type(safe.entries) == "table",
+    "and a catalog that raises does not take the editor down with it")
+  ctx.catalog = nil
+end
+
 run.release()
 require("src.ui.Screens").invalidate()
 T.finish("Gen1MenuManager")
