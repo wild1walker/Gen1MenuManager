@@ -584,12 +584,68 @@ do
   T.eq(table.concat(onBorder, ","), "",
     "no text is drawn on the frame's bottom edge")
 
-  local title
+  -- The title line says which menu, and how many there are.  Not "< TITLE >":
+  -- `<` and `>` are not in the Game Boy font, so they drew as nothing and the
+  -- only visible effect was the title sitting two columns further right.
+  local onTitle = {}
   for _, d in ipairs(drawn) do
-    if d.y == 8 then title = d.text break end
+    if d.y == 8 then onTitle[#onTitle + 1] = d.text end
   end
-  T.eq(title, "< START MENU >",
-    "and the title carries the arrows that walk between the menus")
+  T.eq(onTitle[1], "START MENU", "the title is the title, undecorated")
+  T.eq(onTitle[2], "1/3", "with the page count beside it")
+  for _, text in ipairs(onTitle) do
+    T.check(not text:find("[<>]"),
+      "and nothing the font cannot draw: " .. text)
+  end
+
+  -- every line stays inside the box's interior, which is tiles 1 to 18
+  local overflow = {}
+  for _, d in ipairs(drawn) do
+    local wide = d.x + #d.text * 8
+    if d.x < 8 or wide > 19 * 8 then
+      overflow[#overflow + 1] = ("%s@%d"):format(d.text, d.x)
+    end
+  end
+  T.eq(table.concat(overflow, ","), "",
+    "and no line reaches the left or right border")
+end
+
+-- ------- and the empty page fits inside its own box too
+--
+-- "NOTHING TO ARRANGE" is exactly 18 glyphs and the interior is tiles 1 to
+-- 18, so starting it a column in put its last two characters on the border.
+
+do
+  local Font = require("src.render.Font")
+  -- a PC menu nothing has opened yet: the snapshot is what the editor reads,
+  -- and an earlier block in this suite has already filled this one in
+  local probe = Screens.build(game, "Gen1MenuManagerEditor", { context = "pc" })
+  local saved = probe.ctx.snapshot
+  probe.ctx.snapshot = {}
+  local empty = Screens.build(game, "Gen1MenuManagerEditor", { context = "pc" })
+  T.eq(#empty.entries, 0, "a PC menu nothing has opened has nothing to arrange")
+
+  local drawn = {}
+  local realDraw = Font.draw
+  Font.draw = function(text, x, y)
+    drawn[#drawn + 1] = { text = tostring(text), x = x, y = y }
+    return realDraw(text, x, y)
+  end
+  empty:draw()
+  Font.draw = realDraw
+
+  local said, overflow = {}, {}
+  for _, d in ipairs(drawn) do
+    said[#said + 1] = d.text
+    if d.x < 8 or d.x + #d.text * 8 > 19 * 8 then
+      overflow[#overflow + 1] = ("%s@%d"):format(d.text, d.x)
+    end
+  end
+  T.check(table.concat(said, ","):find("NOTHING TO ARRANGE", 1, true) ~= nil,
+    "and says so")
+  T.eq(table.concat(overflow, ","), "",
+    "inside the box, every glyph of it")
+  probe.ctx.snapshot = saved
 end
 
 -- ------- a row the menu has not shown yet is still arrangeable
@@ -644,6 +700,38 @@ do
   end
   T.check(cancelEntry and cancelEntry.locked,
     "and CANCEL is locked even before the menu has shown it")
+
+  -- A row the menu is not offering where the player is standing must not read
+  -- ON.  Switching it on cannot put it on the menu -- what keeps it off is the
+  -- game, not the layout -- and ON is a promise this screen cannot keep.  Four
+  -- dashes, the same as a pin you do not own yet.
+  T.check(flyEntry and flyEntry.absent,
+    "a catalog row the menu is not offering is marked as absent")
+
+  -- ...and what it DRAWS says so.  Read off the screen rather than rebuilt
+  -- here: the marker column is the thing the player reads, and a test that
+  -- formats its own copy of it proves nothing about the one on screen.
+  local Font = require("src.render.Font")
+  local cells = {}
+  local realDraw = Font.draw
+  Font.draw = function(text, x, y)
+    cells[#cells + 1] = { text = tostring(text), x = x, y = y }
+    return realDraw(text, x, y)
+  end
+  after:draw()
+  Font.draw = realDraw
+
+  local labelAt, markerAt = {}, {}
+  for _, cell in ipairs(cells) do
+    if cell.x == 2 * 8 then labelAt[cell.y] = cell.text end
+    if cell.x == 15 * 8 then markerAt[cell.y] = cell.text end
+  end
+  local flyMarker
+  for y, label in pairs(labelAt) do
+    if label == "FLY" then flyMarker = markerAt[y] end
+  end
+  T.eq(flyMarker, "----",
+    "and the row reads as dashes on screen rather than as ON")
 
   -- a catalog that raises costs the catalog, not the editor
   ctx.catalog = function() error("boom", 0) end

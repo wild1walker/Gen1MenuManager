@@ -38,7 +38,7 @@ Each menu keeps its own arrangement. Open the editor from the START menu and
 you are editing the START menu; open it from a PC and you are editing that —
 and **LEFT and RIGHT walk between them**, which is what makes all three
 reachable from the one row on the OPTION screen. The title says which menu you
-are on and carries the arrows: `< START MENU >`.
+are on and the page count beside it says how many there are: `1/3`.
 
 | Button | Does |
 | --- | --- |
@@ -79,6 +79,12 @@ with `FLY` in the party, holding the editor open. The mod that builds the menu
 publishes a catalog of everything it can ever show, and the rows in it that are
 not on screen right now are listed anyway — ordered and switched off in
 advance, the same way a pin is.
+
+Such a row reads `----` rather than `ON`. Switching it on cannot put it on the
+menu, because what is keeping it off is the game and not the layout: no `FLY`
+in the party, no repel in the bag, daylight. `ON` there would be a promise this
+screen cannot keep, which is the same reason a pin you do not own yet reads
+`----` too.
 
 `CANCEL` is locked there. B closes the menu too, but a way out you can *see* is
 not the same as one you have to know about.
