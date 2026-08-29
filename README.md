@@ -24,8 +24,10 @@ list, because nothing here reaches into engine internals.
 Three ways in, and no arrangement can close all of them:
 
 - press **SELECT** with the START menu or a PC menu open
-- pick **MENU MGR**, the row on either menu
-- pick **MENU MANAGER** on the OPTION screen
+- pick **MENU MGR**, the row on either menu (and on the SELECT field menu,
+  where `SELECT ROW` is on)
+- pick **MENU MANAGER** on the OPTION screen, then LEFT and RIGHT for the menu
+  you want
 
 SELECT is free in both menus — the START menu's watched-key mask is
 `PAD_DOWN | PAD_UP | PAD_START | PAD_B | PAD_A` and the shared menu widget
@@ -33,15 +35,48 @@ reads up, down, A, B and START only — so the shortcut takes nothing away from
 the vanilla controls.
 
 Each menu keeps its own arrangement. Open the editor from the START menu and
-you are editing the START menu; open it from a PC and you are editing that.
+you are editing the START menu; open it from a PC and you are editing that —
+and **LEFT and RIGHT walk between them**, which is what makes all three
+reachable from the one row on the OPTION screen.
 
 | Button | Does |
 | --- | --- |
 | Up / Down | move the cursor |
+| Left / Right | switch which menu you are arranging |
 | A | grab the row, then A again to drop it |
 | Up / Down while grabbed | move the row |
 | SELECT | show / hide a row, or switch a pin on and off |
 | B | leave |
+
+Left and Right are the only keys the editor was not already using. They do
+nothing while a row is grabbed: the row is in your hand, and carrying it onto
+a different menu is not a move anyone means to make.
+
+### The third menu
+
+The overworld **SELECT** field menu — `FLY`, `TELEPORT`, `FLASH`, `DIG`, a
+repel — can be arranged too, where [Gen1WildQOL][qol] is installed and its
+`EASY HM USE` is on.
+
+That menu is not the engine's and has no engine hook to wrap, because it is not
+a menu with a fixed shape: it is built fresh on every press out of what is
+usable on this tile, with this party, in this bag. So that mod publishes a
+registry to hand the rows round, and this joins it — the same arrangement as
+everywhere else, in the other direction. Everywhere else this mod runs
+outermost on a hook so it sees the finished list; there the registry hands it
+the finished list directly.
+
+Rows on it carry ids, which the layout already prefers over labels (it does the
+same for Gold's PC rows): an id is neither localized nor rewritten when the
+bag's best repel changes, and both are true of the labels on that menu.
+
+`CANCEL` is locked there. B closes the menu too, but a way out you can *see* is
+not the same as one you have to know about.
+
+Without that mod there is simply no SELECT context — nothing is logged about a
+menu you do not have.
+
+[qol]: https://github.com/wild1walker/Gen1WildQOL
 
 The right-hand column reads `ON`, `OFF`, `PIN`, `LOCK` (a row that cannot be
 hidden), or `----` for a pin you have not unlocked yet.
@@ -78,6 +113,10 @@ They all live under the mod's entry in the mod manager.
   route left.
 - **MENU ROW** — show MENU MGR on the START menu.
 - **PC ROW** — show MENU MGR on the PC menu.
+- **SELECT ROW** — show MENU MGR on the overworld SELECT field menu. **Off** by
+  default, unlike the other two: that menu earns its place by being short and
+  by being only what is usable where you are standing, and it is arranged from
+  the OPTION screen without it.
 - **HIDE UNUSABLE** — drop a pin whose action cannot run right now (the
   BICYCLE indoors, SURF facing dry land) instead of showing a row that
   refuses. On by default.

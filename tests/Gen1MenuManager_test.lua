@@ -484,6 +484,76 @@ T.eq(labelOf(vanilla, "P:townmap"), "TOWN MAP",
   "and the editor is unmoved either way")
 setOption("short_names", true)
 
+-- ------- the editor walks between the menus it can arrange
+--
+-- One row on the OPTION screen opens this screen, and there are three menus
+-- to arrange behind it.  LEFT and RIGHT are the only keys the editor was not
+-- already using -- A grabs, SELECT toggles, UP and DOWN move, B and START
+-- leave -- so they are what steps between them.
+
+do
+  local editor = Screens.build(game, "Gen1MenuManagerEditor", {})
+  T.eq(editor.key, "start", "the editor opens on the menu it was asked for")
+  T.check(type(editor.keys) == "table" and #editor.keys >= 2,
+    "and knows the others it can reach")
+
+  local titles = {}
+  for i = 1, #editor.keys do
+    titles[#titles + 1] = tostring(editor.ctx.title)
+    press("right"); editor:update()
+  end
+  T.eq(editor.key, "start", "walking all the way round comes back")
+  T.eq(table.concat(titles, ","), "START MENU,PC MENU,SELECT MENU",
+    "and it visits every menu on the way, in a fixed order")
+
+  press("left"); editor:update()
+  T.eq(editor.ctx.title, "SELECT MENU", "LEFT walks the other way")
+  press("right"); editor:update()
+  T.eq(editor.ctx.title, "START MENU", "and RIGHT undoes it")
+
+  -- a grab is modal: the row is in your hand, and carrying it onto another
+  -- menu is not a move anyone means to make
+  press("a"); editor:update()
+  T.check(editor.grabbed, "A grabs a row")
+  press("right"); editor:update()
+  T.eq(editor.ctx.title, "START MENU",
+    "and a held row pins the editor to the menu it came from")
+  press("a"); editor:update()
+  T.check(not editor.grabbed, "dropping it lets the editor move again")
+  press("right"); editor:update()
+  T.eq(editor.ctx.title, "PC MENU", "which it then does")
+end
+
+-- ------- the SELECT field menu is one of them
+--
+-- It is not an engine menu and has no engine hook: Gen1WildQOL builds it and
+-- publishes a registry to hand the rows round.  This joins that registry, so
+-- the context exists whether or not anything has opened the menu yet -- an
+-- editor page that says PRESS SELECT FIRST is a better answer than a context
+-- that is not there at all.
+
+do
+  local editor = Screens.build(game, "Gen1MenuManagerEditor",
+                               { context = "select" })
+  T.eq(editor.key, "select", "the editor opens on the SELECT menu when asked")
+  T.eq(editor.ctx.title, "SELECT MENU", "and says which menu it is on")
+  T.eq(editor.ctx.emptyHint, "PRESS SELECT FIRST",
+    "and says how to fill it when nothing has been seen yet")
+  T.check(editor.ctx.load ~= nil, "it has a layout of its own to load")
+
+  -- CANCEL is protected there: B closes the menu too, but a way out you can
+  -- SEE is not the same as one you have to know about
+  local locked = editor.ctx.protected()
+  T.check(locked["I:cancel"] == true,
+    "and CANCEL cannot be hidden off the field menu")
+
+  -- the SELECT layout is stored under its own key, so arranging one menu
+  -- never disturbs another
+  editor.ctx.save({})
+  T.check(game.save.modData.Gen1MenuManager.select_layout ~= nil,
+    "the SELECT arrangement is saved under a key of its own")
+end
+
 run.release()
 require("src.ui.Screens").invalidate()
 T.finish("Gen1MenuManager")
