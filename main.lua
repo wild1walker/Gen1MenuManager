@@ -153,6 +153,30 @@ return function(mod)
     }),
   }
 
+  -- ------- a page that is not a page
+  --
+  -- The other two contexts arrange menus the ENGINE builds, so they exist
+  -- wherever this mod does.  This one arranges a menu another mod builds, and
+  -- on a build without that mod there is no such menu -- not empty, absent.
+  --
+  -- Left in the cycle it was the worst kind of dead end: LEFT and RIGHT
+  -- stepped onto a page that said NOTHING TO ARRANGE and PRESS SELECT FIRST,
+  -- and pressing SELECT could not help, because the empty page ignores every
+  -- key but the four that leave it.  A player reads that as the editor being
+  -- broken, and reports it as SELECT no longer working -- which is exactly
+  -- what it looks like.
+  --
+  -- So it is out of the cycle until the registry is actually joined below.
+  -- Nothing else changes: join it and the page is there, catalog and all.
+  contexts.select.available = false
+
+  -- Published so the menus this can arrange are visible from outside: which
+  -- ones exist, and whether each is joinable yet.  `select` is the only one
+  -- that is ever unavailable, and it is what joining the field-menu registry
+  -- below switches on -- so this is also the seam the suite drives that
+  -- through, rather than standing up a whole second mod to publish a registry.
+  mod.exports.contexts = contexts
+
   mod.content.screens:register(SCREEN, {
     new = makeScreen(mod, Layout, Pins, contexts).new,
   })
@@ -433,6 +457,8 @@ return function(mod)
     if type(registry.catalog) == "function" then
       contexts.select.catalog = registry.catalog
     end
+    -- There is a menu to arrange now, so the editor may walk onto its page.
+    contexts.select.available = true
     mod.log:info("the SELECT field menu is arrangeable")
   end)
 

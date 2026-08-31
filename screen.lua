@@ -147,10 +147,19 @@ return function(mod, Layout, Pins, contexts)
   -- has a shorter cycle rather than a dead step in it.
   local ORDER = { "start", "pc", "select" }
 
+  -- Filtered to the ones that exist AND can be arranged: a context whose menu
+  -- is built by a mod that is not installed is marked unavailable (main.lua),
+  -- and stepping onto a page that can never hold a row reads as the editor
+  -- being broken rather than as the menu being absent.
+  local function arrangeable(key)
+    local ctx = contexts[key]
+    return ctx ~= nil and ctx.available ~= false
+  end
+
   local function cycleKeys()
     local keys = {}
     for _, key in ipairs(ORDER) do
-      if contexts[key] then keys[#keys + 1] = key end
+      if arrangeable(key) then keys[#keys + 1] = key end
     end
     return keys
   end
@@ -161,8 +170,8 @@ return function(mod, Layout, Pins, contexts)
     self.isOpaque = true
     self.game = game
     self.keys = cycleKeys()
-    self.key = contexts[opts.context or "start"] and (opts.context or "start")
-      or "start"
+    local wanted = opts.context or "start"
+    self.key = arrangeable(wanted) and wanted or "start"
     self.ctx = contexts[self.key] or contexts.start
     self.onCancel = opts.onCancel
     self.entries = buildEntries(self.ctx, game)

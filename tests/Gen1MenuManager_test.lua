@@ -503,11 +503,13 @@ do
     press("right"); editor:update()
   end
   T.eq(editor.key, "start", "walking all the way round comes back")
-  T.eq(table.concat(titles, ","), "START MENU,PC MENU,SELECT MENU",
+  -- Two, not three: the SELECT page joins the cycle only once something
+  -- publishes a field menu, and nothing here does.  See the section below.
+  T.eq(table.concat(titles, ","), "START MENU,PC MENU",
     "and it visits every menu on the way, in a fixed order")
 
   press("left"); editor:update()
-  T.eq(editor.ctx.title, "SELECT MENU", "LEFT walks the other way")
+  T.eq(editor.ctx.title, "PC MENU", "LEFT walks the other way")
   press("right"); editor:update()
   T.eq(editor.ctx.title, "START MENU", "and RIGHT undoes it")
 
@@ -524,13 +526,43 @@ do
   T.eq(editor.ctx.title, "PC MENU", "which it then does")
 end
 
--- ------- the SELECT field menu is one of them
+-- ------- the SELECT field menu is one of them, once there IS one
 --
 -- It is not an engine menu and has no engine hook: Gen1WildQOL builds it and
--- publishes a registry to hand the rows round.  This joins that registry, so
--- the context exists whether or not anything has opened the menu yet -- an
--- editor page that says PRESS SELECT FIRST is a better answer than a context
--- that is not there at all.
+-- publishes a registry to hand the rows round.  This mod joins that registry
+-- on mods.loaded, and the page appears then -- not before.
+--
+-- Before, it was always in the cycle.  Running this mod on its own, or beside
+-- the standalone Quality of Life which has no registry, gave the editor a
+-- page that could never hold a row: RIGHT off the PC menu landed on a
+-- permanently empty SELECT MENU, which reads as the editor being broken and
+-- gets reported as SELECT no longer working.
+--
+-- Nothing is loaded here but this mod, so that is the state the suite is in
+-- and the first case below pins it.  Everything after it is the joined state,
+-- reached the way main.lua reaches it -- `available` is what joining sets.
+
+do
+  local bare = Screens.build(game, "Gen1MenuManagerEditor", {})
+  local titles = {}
+  for i = 1, #bare.keys do
+    titles[#titles + 1] = tostring(bare.ctx.title)
+    press("right"); bare:update()
+  end
+  T.eq(table.concat(titles, ","), "START MENU,PC MENU",
+    "with nothing publishing a field menu, there is no page for one")
+end
+
+-- and from here on, there is one: joining the registry is what sets this, and
+-- the mod publishes its contexts so the suite can reach the same switch
+-- without standing up a second mod to publish a registry from.
+do
+  local contexts = run.loader.exports[run.mod.manifest.id].contexts
+  T.check(type(contexts) == "table", "the contexts are published")
+  T.eq(contexts.select.available, false,
+    "and SELECT is the one that starts unjoinable")
+  contexts.select.available = true
+end
 
 do
   local editor = Screens.build(game, "Gen1MenuManagerEditor",
