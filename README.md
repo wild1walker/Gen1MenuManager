@@ -119,6 +119,26 @@ inside the bag's own result dispatch, which is file-local and exported
 nowhere; pinning them would mean duplicating engine logic that can drift out
 of step. They stay in the bag.
 
+## On Gold, Silver and Crystal
+
+The editor runs on the Gen 2 carts too, and arranges the same two menus there.
+Two things are different, and both are the cart's doing rather than choices.
+
+**Putting the START menu back.** Red's `Menu` pops itself before it runs a
+row's `onSelect`, so by the time the editor opens the START menu is already off
+the stack and re-opening puts back the only one. Gold's `StartMenu:choose` does
+*not* pop — it runs `onSelect` and returns — so the editor sits on top of a
+live START menu, and a naive re-open builds a second one behind it. Two
+identical menus stacked reads exactly as "I can't close it". The stale one is
+dropped first, and popped rather than reused, because the menu underneath was
+built from the layout you just changed.
+
+**`ROW HINTS`**, a Gen 2-only row, off by default. Gold prints a line of help
+under the highlighted START row; it covers the bottom tenth of the screen every
+frame the menu is open, and someone who has arranged their own menu knows what
+their rows do. On does *not* force the hints back — it stands down and leaves
+the cart's own `MENU ACCOUNT` setting to decide, so the two never argue.
+
 ## Options
 
 They all live under the mod's entry in the mod manager.
